@@ -3,31 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
     /**
-     * Dashboard para Super Admin
+     * Dashboard Super Admin
      */
-    public function superadmin(): View
+    public function superAdmin(): Response
     {
-        return view('dashboards.superadmin');
+        return Inertia::render('Dashboard/SuperAdmin');
     }
 
     /**
-     * Dashboard para Admin
+     * Dashboard Admin
      */
-    public function admin(): View
+    public function admin(): Response
     {
-        return view('dashboards.admin');
+        return Inertia::render('Dashboard/Admin');
     }
 
     /**
-     * Dashboard para Empleado
+     * Dashboard Empleado
      */
-    public function empleado(): View
+    public function empleado(): Response
     {
-        return view('dashboards.empleado');
+        return Inertia::render('Dashboard/Empleado');
     }
 }

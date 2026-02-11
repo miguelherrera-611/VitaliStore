@@ -2,17 +2,21 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
-// ====================================
-// RUTAS PÚBLICAS (Sin autenticación)
-// ====================================
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
+// Ruta de bienvenida
 Route::get('/', function () {
-    // Si ya está autenticado, redirigir al dashboard correspondiente
-    if (Auth::check()) {
-        $user = Auth::user();
+    // Si el usuario está autenticado, redirigir a su dashboard
+    if (auth()->check()) {
+        $user = auth()->user();
 
         if ($user->hasRole('super_admin')) {
             return redirect()->route('dashboard.superadmin');
@@ -25,18 +29,18 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    return view('welcome');
-});
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
+})->name('welcome');
 
-// ====================================
-// RUTAS PROTEGIDAS (Requieren autenticación)
-// ====================================
-
+// Rutas protegidas con autenticación
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard genérico - redirige según rol
+    // Dashboard general (fallback)
     Route::get('/dashboard', function () {
-        $user = Auth::user();
+        $user = auth()->user();
 
         if ($user->hasRole('super_admin')) {
             return redirect()->route('dashboard.superadmin');
@@ -46,105 +50,81 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return redirect()->route('dashboard.empleado');
         }
 
-        // Si no tiene rol, mostrar dashboard genérico
-        return view('dashboard');
+        return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    // ====================================
-    // DASHBOARDS POR ROL
-    // ====================================
+    // Dashboards por rol
+    Route::get('/dashboard/superadmin', [DashboardController::class, 'superAdmin'])
+        ->middleware('role:super_admin')
+        ->name('dashboard.superadmin');
 
-    // Dashboard Super Admin
-    Route::get('/dashboard/superadmin', [DashboardController::class, 'superadmin'])
-        ->name('dashboard.superadmin')
-        ->middleware('role:super_admin');
-
-    // Dashboard Admin
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])
-        ->name('dashboard.admin')
-        ->middleware('role:admin');
+        ->middleware('role:admin')
+        ->name('dashboard.admin');
 
-    // Dashboard Empleado
     Route::get('/dashboard/empleado', [DashboardController::class, 'empleado'])
-        ->name('dashboard.empleado')
-        ->middleware('role:empleado');
+        ->middleware('role:empleado')
+        ->name('dashboard.empleado');
 
-    // ====================================
-    // RUTAS DE PERFIL (Todos los usuarios autenticados)
-    // ====================================
-
+    // Perfil de usuario
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // ====================================
-    // MÓDULO DE USUARIOS (Solo Super Admin)
-    // ====================================
+    // ==========================================
+    // MÓDULOS (pendientes de implementar)
+    // ==========================================
 
+    // Gestión de Usuarios (solo super_admin)
     Route::middleware('role:super_admin')->prefix('usuarios')->name('usuarios.')->group(function () {
-        // Aquí irán las rutas de gestión de usuarios (próximamente)
-        // Route::get('/', [UserController::class, 'index'])->name('index');
-        // Route::get('/crear', [UserController::class, 'create'])->name('create');
-        // etc...
+        // Route::get('/', [UsuarioController::class, 'index'])->name('index');
+        // Route::get('/crear', [UsuarioController::class, 'create'])->name('create');
+        // Route::post('/', [UsuarioController::class, 'store'])->name('store');
+        // Route::get('/{id}/editar', [UsuarioController::class, 'edit'])->name('edit');
+        // Route::put('/{id}', [UsuarioController::class, 'update'])->name('update');
+        // Route::delete('/{id}', [UsuarioController::class, 'destroy'])->name('destroy');
     });
 
-    // ====================================
-    // MÓDULO DE PRODUCTOS (Admin y Super Admin)
-    // ====================================
-
+    // Gestión de Productos (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('productos')->name('productos.')->group(function () {
-        // Aquí irán las rutas de gestión de productos (próximamente)
-        // Route::get('/', [ProductController::class, 'index'])->name('index');
-        // Route::get('/crear', [ProductController::class, 'create'])->name('create');
-        // etc...
+        // Route::get('/', [ProductoController::class, 'index'])->name('index');
+        // Route::get('/crear', [ProductoController::class, 'create'])->name('create');
+        // Route::post('/', [ProductoController::class, 'store'])->name('store');
+        // Route::get('/{id}/editar', [ProductoController::class, 'edit'])->name('edit');
+        // Route::put('/{id}', [ProductoController::class, 'update'])->name('update');
+        // Route::delete('/{id}', [ProductoController::class, 'destroy'])->name('destroy');
     });
 
-    // ====================================
-    // MÓDULO DE VENTAS (Todos los usuarios autenticados)
-    // ====================================
-
+    // Gestión de Ventas (todos los roles autenticados)
     Route::prefix('ventas')->name('ventas.')->group(function () {
-        // Aquí irán las rutas de ventas (próximamente)
-        // Route::get('/', [SaleController::class, 'index'])->name('index');
-        // Route::get('/crear', [SaleController::class, 'create'])->name('create');
-        // etc...
+        // Route::get('/', [VentaController::class, 'index'])->name('index');
+        // Route::get('/crear', [VentaController::class, 'create'])->name('create');
+        // Route::post('/', [VentaController::class, 'store'])->name('store');
+        // Route::get('/{id}', [VentaController::class, 'show'])->name('show');
     });
 
-    // ====================================
-    // MÓDULO DE CLIENTES (Admin y Super Admin)
-    // ====================================
-
+    // Gestión de Clientes (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('clientes')->name('clientes.')->group(function () {
-        // Aquí irán las rutas de gestión de clientes (próximamente)
-        // Route::get('/', [ClientController::class, 'index'])->name('index');
-        // Route::get('/crear', [ClientController::class, 'create'])->name('create');
-        // etc...
+        // Route::get('/', [ClienteController::class, 'index'])->name('index');
+        // Route::get('/crear', [ClienteController::class, 'create'])->name('create');
+        // Route::post('/', [ClienteController::class, 'store'])->name('store');
+        // Route::get('/{id}/editar', [ClienteController::class, 'edit'])->name('edit');
+        // Route::put('/{id}', [ClienteController::class, 'update'])->name('update');
+        // Route::delete('/{id}', [ClienteController::class, 'destroy'])->name('destroy');
     });
 
-    // ====================================
-    // MÓDULO DE INVENTARIO (Admin y Super Admin)
-    // ====================================
-
+    // Gestión de Inventario (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('inventario')->name('inventario.')->group(function () {
-        // Aquí irán las rutas de gestión de inventario (próximamente)
-        // Route::get('/', [InventoryController::class, 'index'])->name('index');
-        // etc...
+        // Route::get('/', [InventarioController::class, 'index'])->name('index');
+        // Route::post('/ajustar', [InventarioController::class, 'ajustar'])->name('ajustar');
     });
 
-    // ====================================
-    // MÓDULO DE REPORTES (Admin y Super Admin)
-    // ====================================
-
+    // Reportes (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('reportes')->name('reportes.')->group(function () {
-        // Aquí irán las rutas de reportes (próximamente)
-        // Route::get('/ventas', [ReportController::class, 'sales'])->name('ventas');
-        // Route::get('/inventario', [ReportController::class, 'inventory'])->name('inventario');
-        // etc...
+        // Route::get('/ventas', [ReporteController::class, 'ventas'])->name('ventas');
+        // Route::get('/inventario', [ReporteController::class, 'inventario'])->name('inventario');
+        // Route::get('/clientes', [ReporteController::class, 'clientes'])->name('clientes');
     });
 });
-
-// ====================================
-// INCLUIR RUTAS DE AUTENTICACIÓN
-// ====================================
 
 require __DIR__.'/auth.php';
