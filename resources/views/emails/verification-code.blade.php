@@ -20,7 +20,7 @@
             overflow: hidden;
         }
         .header {
-            background-color: #4F46E5;
+            background-color: #dc2626;  /* ✅ CORREGIDO: Rojo consistente */
             color: white;
             padding: 30px;
             text-align: center;
@@ -34,7 +34,7 @@
         }
         .code-box {
             background-color: #F3F4F6;
-            border: 2px dashed #4F46E5;
+            border: 2px dashed #dc2626;  /* ✅ CORREGIDO: Rojo consistente */
             border-radius: 8px;
             padding: 20px;
             text-align: center;
@@ -43,7 +43,7 @@
         .code {
             font-size: 36px;
             font-weight: bold;
-            color: #4F46E5;
+            color: #dc2626;  /* ✅ CORREGIDO: Rojo consistente */
             letter-spacing: 8px;
         }
         .footer {

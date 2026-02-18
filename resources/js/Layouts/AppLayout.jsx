@@ -41,7 +41,8 @@ export default function AppLayout({ children }) {
                                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition"
                                 >
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                                        {/* ✅ CORREGIDO: from-red-600 to-red-800 */}
+                                        <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center">
                                             <span className="text-white text-sm font-semibold">
                                                 {auth.user.name.charAt(0)}
                                             </span>

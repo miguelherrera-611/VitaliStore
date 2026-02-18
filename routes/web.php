@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -72,58 +73,82 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ==========================================
-    // MÓDULOS (pendientes de implementar)
+    // MÓDULOS FUNCIONALES
     // ==========================================
 
     // Gestión de Usuarios (solo super_admin)
     Route::middleware('role:super_admin')->prefix('usuarios')->name('usuarios.')->group(function () {
-        // Route::get('/', [UsuarioController::class, 'index'])->name('index');
-        // Route::get('/crear', [UsuarioController::class, 'create'])->name('create');
-        // Route::post('/', [UsuarioController::class, 'store'])->name('store');
-        // Route::get('/{id}/editar', [UsuarioController::class, 'edit'])->name('edit');
-        // Route::put('/{id}', [UsuarioController::class, 'update'])->name('update');
-        // Route::delete('/{id}', [UsuarioController::class, 'destroy'])->name('destroy');
+        Route::get('/', function () {
+            return Inertia::render('Usuarios/Index', [
+                'usuarios' => [],
+            ]);
+        })->name('index');
     });
 
     // Gestión de Productos (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('productos')->name('productos.')->group(function () {
-        // Route::get('/', [ProductoController::class, 'index'])->name('index');
-        // Route::get('/crear', [ProductoController::class, 'create'])->name('create');
-        // Route::post('/', [ProductoController::class, 'store'])->name('store');
-        // Route::get('/{id}/editar', [ProductoController::class, 'edit'])->name('edit');
-        // Route::put('/{id}', [ProductoController::class, 'update'])->name('update');
-        // Route::delete('/{id}', [ProductoController::class, 'destroy'])->name('destroy');
+        Route::get('/', [ProductoController::class, 'index'])->name('index');
+        Route::get('/crear', [ProductoController::class, 'create'])->name('create');
+        Route::post('/', [ProductoController::class, 'store'])->name('store');
+        Route::get('/{id}', [ProductoController::class, 'show'])->name('show');
+        Route::get('/{id}/editar', [ProductoController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ProductoController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ProductoController::class, 'destroy'])->name('destroy');
     });
 
     // Gestión de Ventas (todos los roles autenticados)
     Route::prefix('ventas')->name('ventas.')->group(function () {
-        // Route::get('/', [VentaController::class, 'index'])->name('index');
-        // Route::get('/crear', [VentaController::class, 'create'])->name('create');
-        // Route::post('/', [VentaController::class, 'store'])->name('store');
-        // Route::get('/{id}', [VentaController::class, 'show'])->name('show');
+        Route::get('/', function () {
+            return Inertia::render('Ventas/Index', [
+                'ventas' => [],
+            ]);
+        })->name('index');
+        
+        Route::get('/crear', function () {
+            return Inertia::render('Ventas/Create');
+        })->name('create');
     });
 
     // Gestión de Clientes (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('clientes')->name('clientes.')->group(function () {
-        // Route::get('/', [ClienteController::class, 'index'])->name('index');
-        // Route::get('/crear', [ClienteController::class, 'create'])->name('create');
-        // Route::post('/', [ClienteController::class, 'store'])->name('store');
-        // Route::get('/{id}/editar', [ClienteController::class, 'edit'])->name('edit');
-        // Route::put('/{id}', [ClienteController::class, 'update'])->name('update');
-        // Route::delete('/{id}', [ClienteController::class, 'destroy'])->name('destroy');
+        Route::get('/', function () {
+            return Inertia::render('Clientes/Index', [
+                'clientes' => [],
+            ]);
+        })->name('index');
     });
 
     // Gestión de Inventario (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('inventario')->name('inventario.')->group(function () {
-        // Route::get('/', [InventarioController::class, 'index'])->name('index');
-        // Route::post('/ajustar', [InventarioController::class, 'ajustar'])->name('ajustar');
+        Route::get('/', function () {
+            return Inertia::render('Inventario/Index', [
+                'productos' => [],
+            ]);
+        })->name('index');
+    });
+
+    // Gestión de Proveedores (admin y super_admin)
+    Route::middleware('role:admin|super_admin')->prefix('proveedores')->name('proveedores.')->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('Proveedores/Index', [
+                'proveedores' => [],
+            ]);
+        })->name('index');
     });
 
     // Reportes (admin y super_admin)
     Route::middleware('role:admin|super_admin')->prefix('reportes')->name('reportes.')->group(function () {
-        // Route::get('/ventas', [ReporteController::class, 'ventas'])->name('ventas');
-        // Route::get('/inventario', [ReporteController::class, 'inventario'])->name('inventario');
-        // Route::get('/clientes', [ReporteController::class, 'clientes'])->name('clientes');
+        Route::get('/', function () {
+            return Inertia::render('Reportes/Index');
+        })->name('index');
+        
+        Route::get('/ventas', function () {
+            return Inertia::render('Reportes/Ventas');
+        })->name('ventas');
+        
+        Route::get('/inventario', function () {
+            return Inertia::render('Reportes/Inventario');
+        })->name('inventario');
     });
 });
 

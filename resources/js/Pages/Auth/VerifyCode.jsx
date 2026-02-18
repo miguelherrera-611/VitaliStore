@@ -90,9 +90,9 @@ export default function VerifyCode({ email }) {
                             {processing ? 'Verificando...' : 'Verificar Código'}
                         </button>
 
-                        {/* Back to Login */}
+                        {/* Back to login */}
                         <div className="text-center">
-                            <a href="/Login" className="text-sm text-gray-600 hover:text-gray-900 transition">
+                            <a href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition">
                                 ← Volver al inicio de sesión
                             </a>
                         </div>

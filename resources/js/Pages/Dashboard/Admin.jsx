@@ -1,5 +1,5 @@
 import AppLayout from '@/Layouts/AppLayout';
-import { usePage } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 
 export default function Admin() {
     const { auth } = usePage().props;
@@ -61,36 +61,42 @@ export default function Admin() {
                             description="Gestionar catálogo e inventario"
                             icon="box"
                             color="blue"
+                            href="/productos"
                         />
                         <ActionCard
                             title="Ventas"
                             description="Registrar y consultar ventas"
                             icon="cart"
                             color="green"
+                            href="/ventas"
                         />
                         <ActionCard
                             title="Reportes"
                             description="Analíticas y estadísticas"
                             icon="chart"
                             color="purple"
+                            href="/reportes"
                         />
                         <ActionCard
                             title="Inventario"
                             description="Control de stock y almacén"
                             icon="warehouse"
                             color="orange"
+                            href="/inventario"
                         />
                         <ActionCard
                             title="Clientes"
                             description="Gestionar base de clientes"
                             icon="users"
                             color="pink"
+                            href="/clientes"
                         />
                         <ActionCard
                             title="Proveedores"
                             description="Administrar proveedores"
                             icon="building"
                             color="indigo"
+                            href="/proveedores"
                         />
                     </div>
                 </div>
@@ -130,8 +136,8 @@ function StatsCard({ icon, value, label, color }) {
     );
 }
 
-// Componente reutilizable para Action Cards
-function ActionCard({ title, description, icon, color }) {
+// Componente reutilizable para Action Cards - ✅ ACTUALIZADO CON NAVEGACIÓN
+function ActionCard({ title, description, icon, color, href }) {
     const gradients = {
         blue: 'from-blue-500 to-blue-600',
         green: 'from-green-500 to-green-600',
@@ -151,7 +157,7 @@ function ActionCard({ title, description, icon, color }) {
     };
 
     return (
-        <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition duration-200 border border-gray-100 cursor-pointer">
+        <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition duration-200 border border-gray-100">
             <div className={`w-14 h-14 bg-gradient-to-br ${gradients[color]} rounded-2xl flex items-center justify-center mb-6 shadow-md`}>
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     {icons[icon]}
@@ -159,9 +165,14 @@ function ActionCard({ title, description, icon, color }) {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
             <p className="text-gray-500 text-sm mb-6">{description}</p>
-            <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-xl font-medium transition duration-200">
+            
+            {/* ✅ BOTÓN CON NAVEGACIÓN */}
+            <Link
+                href={href}
+                className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-xl font-medium transition duration-200 text-center"
+            >
                 Gestionar
-            </button>
+            </Link>
         </div>
     );
 }
